@@ -1,10 +1,12 @@
-#import "@preview/touying:0.6.1": config-common, config-page, only, pause, uncover
+#import "@preview/touying:0.6.1": config-common, config-page, only, pause, uncover, utils
 #import "@preview/metropolyst:0.1.0": (
   alert, brands, config-info, focus-slide as _focus-slide, metropolyst-theme, slide, title-slide,
 )
 #import "@preview/cetz:0.4.2"
 #import "@preview/dati-basati:0.1.0" as db
 #import "@preview/tiaoma:0.3.0"
+#import "figures/half-page.typ": half-page, title-page
+
 
 #let accent(body) = text(fill: rgb("#78334e"), body)
 #let callout(body) = block(
@@ -53,7 +55,7 @@
   main-text-color: rgb("#333333"),
   progress-bar-background: rgb("#78334e"),
   config-info(
-    title: [Infrastructure-based Safety For Your Claw],
+    title: [Infrastructure-based Safety\ For Your Claw],
     subtitle: [Agentic Builders' Collective],
     author: [Dr. Gaurav Manek],
     date: "2026-04-18",
@@ -62,23 +64,82 @@
   ),
 )
 
-// Title slide
-#title-slide()
+
+
+#half-page[
+  #title-page()
+][
+  #box(fill: color.rgb("#fff"), inset: 1em, radius: .25em, stroke: 2pt + color.rgb("#444"), link(
+    "https://www.gauravmanek.com/lectures/2026/abc-infrastructure/",
+  )[
+    #tiaoma.qrcode("https://www.gauravmanek.com/lectures/2026/abc-infrastructure/", options: (scale: 4.0), width: 8cm)
+  ])
+]
+
+
+
+
+#slide(
+  title: [Infrastructure-based Safety For Your Claw],
+  composer: (1fr, 1.5fr),
+  config: config-page(margin: (right: 0pt, bottom: 0pt)),
+)[
+  #v(1fr)
+  *Meta's director of AI alignment lost her emails.*
+  #v(1fr)
+  _I had to run to my Mac mini like I was defusing a bomb._
+
+  #align(right)[
+    -- Summer Yue
+  ]
+  #v(1fr)
+][
+  #image("images/meta_email.png", height: 110%)
+]
+
+
+#slide(
+  title: [Infrastructure-based Safety For Your Claw],
+  composer: (1fr, 1.5fr),
+  config: config-page(margin: (right: 0pt, bottom: 0pt)),
+)[
+  #v(1fr)
+  CRITICAL severity issue, but marked as "wontfix".
+
+  *There are plenty of these traps hiding in OpenClaw.*
+  #v(1fr)
+
+  _The boundary between "helpful agent" and "accidentally self-destructing" is
+  dangerously thin._
+  #align(right)[
+    -- From the issue.
+  ]
+
+  #v(1fr)
+][
+  #image("images/wontfix.png", height: 100%)
+]
+
 
 #slide(
   title: [Infrastructure-based Safety For Your Claw],
   composer: (1fr, 1fr),
 )[
-  - Two groups of attendees who want to meet *across groups*, not within groups.
-  - In use at US universities for visit days, qualifier exams, and welcome courses
-  - scales to hundreds of attendees, with:
-    - hybrid in-person/remote attendance
-    - individual requests
-    - departmental policies
-    - last-minute changes
+  #v(1fr)
+  #image("images/delete.png", width: 100%)
+  #v(1fr)
+
+  Claude deleted a 202GB partition.
+
+  _At least the apology was good._
 ][
-  #shadow-image("images/meta_email.png", width: 100%)
+  #v(1fr)
+  #image("images/replit.png", width: 100%)
+  #v(1fr)
+
+  Replit wiped the entire production db of SaaStr.AI.
 ]
+
 
 == The data model
 
@@ -95,42 +156,11 @@
 ]
 
 
-#slide(
-  config: config-page(
-    header: none,
-    background: box(width: 100%, height: 100%, clip: true)[
-      #place(
-        top + center,
-        rect(),
-        // image("images/conclusion.png", width: 100%, height: 100%, fit: "cover"),
-      )
-    ],
-  ),
-)[
-  #grid(
-    columns: (1.2fr, 0.8fr),
-    align: (center, left),
-    column-gutter: 2.5em,
-    [
-      *Cursed in theory.*
-
-      *Excellent for the workload.*
-
-      #v(1fr)
-    ],
-    [ #pause
-      #align(center + horizon)[
-        #box(fill: color.rgb("#fff"), inset: 1em, radius: .25em, stroke: 2pt + color.rgb("#444"))[
-          #link("https://www.gauravmanek.com/lectures/2026/abc-infrastructure/")[
-            #tiaoma.qrcode(
-              "https://www.gauravmanek.com/lectures/2026/abc-infrastructure/",
-              options: (scale: 4.0),
-              width: 8cm,
-            )
-          ]
-          *Scan for more!*
-        ]
-      ]
-    ],
-  )
+#half-page[][
+  #box(fill: color.rgb("#fff"), inset: 1em, radius: .25em, stroke: 2pt + color.rgb("#444"), link(
+    "https://www.gauravmanek.com/lectures/2026/abc-infrastructure/",
+  )[
+    #tiaoma.qrcode("https://www.gauravmanek.com/lectures/2026/abc-infrastructure/", options: (scale: 4.0), width: 8cm)
+  ])
 ]
+

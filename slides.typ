@@ -140,16 +140,114 @@
   Replit wiped the entire production db of SaaStr.AI.
 ]
 
+== The Problem
 
-== The data model
+"Pilot Error" is not a good terminal diagnosis for airplane accidents.
 
-#slide(composer: (1fr, 1fr))[
-  1. *Visitors*: one group of attendees, each with personal requests and constraints
-  2. *Hosts*: another group of attendees, each with personal requests and constraints
-  3. *Meetings*: the currently scheduled meetings between visitors and hosts
-][
-  // #include "figures/data-model.typ"
+== The Paradigm
+
+*The good news: We already know how to deal with this.*
+
+Identity and access management (IAM)
+
+role-based access control (RBAC)
+attribute-based access control (ABAC),
+and other security paradigms have been developed over decades to manage the risks of human error and malicious actors in complex systems.
+
+IAM, RBAC, ABAC, etc. are all about designing infrastructure to be safe against human mistakes and malicious actors.
+
+#slide[
+  #grid(
+    columns: (1fr, 1fr), rows: (auto, 1fr), align: (_, y) => if y > 0 { top } else { bottom }, gutter: 1em
+  )[
+    *What is your threat model?*
+  ][
+    *What is the blast radius?*
+  ][
+    A
+  ][
+    B
+  ]
 ]
+
+== When Designing Infrastructure
+
+1. Minimize the blast radius of a mistake.
+2. Make changes reversible where possible.
+3. Make actions auditable.
+4. Guardrails!
+  - "If you want to do X, you must first do Y."
+5. Separate responsibilities.
+  - Principle of least privilege.
+6. You can't audit the Claw, you can audit the channel.
+
+
+Prefer safety features that are "agent-agnostic", i.e. they don't rely on the agent's internal state or reasoning, but rather on observable actions and their consequences.
+
+General principle: If you can't make it safe, make it easy to recover from mistakes.
+
+
+== Security vs Capability Tradeoff
+
+Security in the general case is a hard problem.
+
+Any infrastructure must reduce the capabilities of the system to achieve security.
+
+
+== BenchClaw's Safety Model
+
+1. NO ACCESS TO ITS OWN CODE.
+  - Good grief, this is a no-brainer. Why would you even consider giving an agent access to its own code? It's like giving a toddler a box of matches and saying "Don't burn the house down, okay?"
+2. Separate 'Claws: Public, Quality, PM.
+  - Running in different docker containers.
+  - Inside each claw, each session is also sandboxed.
+  - Use the same codebase, but different config.
+2. Notion:
+  - Separate access control (Each claw has read-write and read-only access to specific subtrees.)
+  - Reversible, auditable changes (all changes are logged for 30 days and can be reverted.)
+3. Claw -> Claw communication is mediated by a "mailbox" page.
+  - Quality -> PM: "The evaluation is complete."
+  - Auditable!
+4. PM Claw
+  - Only claw that can access Hive (PM software).
+    - Only has non-destructive access to Hive, and all changes are logged by the MCP.
+    - MCP checks if a Hive action includes any users outside of Ocellivision. If so, the action is written as a comment instead of executed. (TODO)
+    - More destructive tools (e.g. deleting a project) are removed from the MCP.
+      - e.g. Deleting an action that is older than 1 day instead just flags it as :trash can emoji:, and hides it from the MCP.
+  - has no access to the internet.
+
+
+== Ideas for Safety Features
+
+1. MCP Gateway
+  - A proxy that sits between the PM Claw and Hive, and mediates all access.
+  - Can enforce additional specific guardrails, e.g. rate limiting, content filtering, etc.
+  - Plug https://github.com/gauravmm/mcp_gateway_maker; it makes generating new gateways really easy.
+
+2. Honeypot/Canary Actions and Tokens
+  - Actions that are designed to be "traps" for the agent, e.g. "delete all actions", "delete all projects", etc.
+  - If the agent tries to execute these actions, it is a strong signal that something is wrong.
+  - These actions can trigger a shutdown of the agent and alert the human operators.
+
+3. Named Entity Recognition (NER) Guardrails
+  - Use NER to identify sensitive entities in the agent's actions, e.g. user names, project names, etc.
+  - Ban mentioning entities in channels unless a human has previously explicitly allowed it.
+  - This can prevent the agent from leaking sensitive information across different users or projects. (i.e. In a channel with Alice about Project X, any attempt by the agent to mention Bob or Project Y should be blocked.)
+
+4. Context Firebreaks for Privileged Agents
+  - Every memory item has a "context tag" that indicates which some category of information it belongs to, e.g. "customer X", "project Y", etc.
+  - Agents can read any memory item, but when they do, the MCP keeps track of which context tags have been accessed in the current session.
+  - Agents can only write to memory items with the least privilege required to write to all of the tags.
+    - Human approval is required to downgrade the privilege level of a memory item.
+  - (Bell-LaPadula Model, if you are some kind of nerd like me.)
+
+
+4. Rate Limits and Damage Caps
+  - Put hard caps on how much the agent can do in a time window.
+  - e.g. no more than 5 messages, 20 edits, or 1 project-wide mutation per hour.
+  - Prevents fast cascades when something goes wrong.
+
+
 
 #plain-focus-slide[
   // #place(center + horizon, dy: 10pt, image("images/look away now.png", height: 160%))

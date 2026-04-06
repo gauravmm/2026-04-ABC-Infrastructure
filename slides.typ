@@ -217,36 +217,38 @@ Any infrastructure must reduce the capabilities of the system to achieve securit
   - has no access to the internet.
 
 
-== Ideas for Safety Features
+== Simple Safety Features
 
 1. MCP Gateway
   - A proxy that sits between the PM Claw and Hive, and mediates all access.
   - Can enforce additional specific guardrails, e.g. rate limiting, content filtering, etc.
   - Plug https://github.com/gauravmm/mcp_gateway_maker; it makes generating new gateways really easy.
 
-2. Honeypot/Canary Actions and Tokens
-  - Actions that are designed to be "traps" for the agent, e.g. "delete all actions", "delete all projects", etc.
-  - If the agent tries to execute these actions, it is a strong signal that something is wrong.
-  - These actions can trigger a shutdown of the agent and alert the human operators.
-
-3. Named Entity Recognition (NER) Guardrails
-  - Use NER to identify sensitive entities in the agent's actions, e.g. user names, project names, etc.
-  - Ban mentioning entities in channels unless a human has previously explicitly allowed it.
-  - This can prevent the agent from leaking sensitive information across different users or projects. (i.e. In a channel with Alice about Project X, any attempt by the agent to mention Bob or Project Y should be blocked.)
-
-4. Context Firebreaks for Privileged Agents
-  - Every memory item has a "context tag" that indicates which some category of information it belongs to, e.g. "customer X", "project Y", etc.
-  - Agents can read any memory item, but when they do, the MCP keeps track of which context tags have been accessed in the current session.
-  - Agents can only write to memory items with the least privilege required to write to all of the tags.
-    - Human approval is required to downgrade the privilege level of a memory item.
-  - (Bell-LaPadula Model, if you are some kind of nerd like me.)
-
-
-4. Rate Limits and Damage Caps
+2. Rate Limits and Damage Caps
   - Put hard caps on how much the agent can do in a time window.
   - e.g. no more than 5 messages, 20 edits, or 1 project-wide mutation per hour.
   - Prevents fast cascades when something goes wrong.
 
+
+3. Honeypot/Canary Actions and Tokens
+  - Actions that are designed to be "traps" for the agent, e.g. "delete all actions", "delete all projects", etc.
+  - If the agent tries to execute these actions, it is a strong signal that something is wrong.
+  - These actions can trigger a shutdown of the agent and alert the human operators.
+
+
+== Balls-to-the-wall Ideas
+
+1. Named Entity Recognition (NER) Guardrails for Public Agents
+  - Use NER to identify sensitive entities in the agent's actions, e.g. user names, project names, etc.
+  - Ban mentioning entities in channels unless a human has previously explicitly allowed it.
+  - This can prevent the agent from leaking sensitive information across different users or projects. (i.e. In a channel with Alice about Project X, any attempt by the agent to mention Bob or Project Y should be blocked.)
+
+2. Context Firebreaks for Privileged Agents
+  - Every memory item has "context tags" that indicates which category of information it belongs to, e.g. "customer X", "project Y", etc.
+  - Agents can read any memory item, but when they do, the MCP keeps track of which tags have been accessed in the current session.
+  - Agents can only write to memory/channels with the least privilege required to write to all of the tags.
+    - Human approval is required to downgrade the privilege level of a memory item.
+  - (Bell-LaPadula Model, if you are some kind of nerd like me.)
 
 
 #plain-focus-slide[

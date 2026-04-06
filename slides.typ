@@ -142,6 +142,7 @@
 
 == The Problem
 #slide()[
+  #v(0.4fr)
   #align(center)[
     *"LLM accident" is not a diagnosis, its a thought-terminating cliché.*
 
@@ -182,12 +183,11 @@
       *We design systems that stay safe when humans are imperfect.*
     ]
   ]
-
   #v(0.4fr)
 ]
 
 == The Threat Model
-
+/*
 #slide(composer: (1fr, 1fr))[
   - *Sampling artifacts*:
     - Hallucinations
@@ -220,55 +220,68 @@
     ]
   ]
 ]
-
-== The Paradigm
-
-*The good news: We already know how to deal with this.*
-
-Identity and access management (IAM)
-
-role-based access control (RBAC)
-attribute-based access control (ABAC),
-and other security paradigms have been developed over decades to manage the risks of human error and malicious actors in complex systems.
-
-IAM, RBAC, ABAC, etc. are all about designing infrastructure to be safe against human mistakes and malicious actors.
-
-#slide[
-  #grid(
-    columns: (1fr, 1fr), rows: (auto, 1fr), align: (_, y) => if y > 0 { top } else { bottom }, gutter: 1em
-  )[
-    *What is your threat model?*
-  ][
-    *What is the blast radius?*
-  ][
-    A
-  ][
-    B
-  ]
-]
+*/
 
 == When Designing Infrastructure
 
-1. Minimize the blast radius of a mistake.
-2. Make changes reversible where possible.
-3. Make actions auditable.
-4. Guardrails!
-  - "If you want to do X, you must first do Y."
-5. Separate responsibilities.
-  - Principle of least privilege.
-6. You can't audit the Claw, you can audit the channel.
+#grid(
+  columns: (1.5fr, auto, 1fr),
+  column-gutter: 0.8em,
+  align: (left, center),
+)[
+  1. Minimize the *blast radius* of a mistake.
+
+  2. Make changes *reversible* where possible.
+
+  3. Make everything *auditable*.
+
+  4. Monitor the output with *guardrails*
+
+  5. Separation of concerns via *isolation*.
+][
+  #pause
+  #align(center + horizon)[
+    #text(size: 1.2em)[
+      $mat(delim: #(none, "}"), row-gap: #2em, ; ; ; ;)$
+    ]
+  ]
+][
+  While being _powerful enough_\
+  for the task at hand.
+]
+
+== Example: Claude Gmail MCP
+
+#grid(
+  columns: (1.5fr, auto, auto),
+  column-gutter: 0.8em,
+  align: (left, center),
+)[
+  - Can draft emails, but not send them.
+
+  - Can delete emails, but not clear trash.
+
+  - Doesn't run in the background, unless you schedule it.
+][
+  #pause
+  #align(center + horizon)[
+    #text(size: 1.2em)[
+      $mat(delim: #(none, "}"), row-gap: #2em, ; ; ; ;)$
+    ]
+  ]
+][
+  *blast radius*
+
+  *reversible*
+
+  auditable
+
+  guardrails
+
+  isolation
+]
 
 
-Prefer safety features that are "agent-agnostic", i.e. they don't rely on the agent's internal state or reasoning, but rather on observable actions and their consequences.
-
-General principle: If you can't make it safe, make it easy to recover from mistakes.
-
-
-== Security vs Capability Tradeoff
-
-Security in the general case is a hard problem.
-
-Any infrastructure must reduce the capabilities of the system to achieve security.
 
 
 == BenchClaw's Safety Model

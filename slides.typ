@@ -281,6 +281,74 @@
   isolation
 ]
 
+== Example: Notion MCP (new)
+
+#grid(
+  columns: (1.5fr, auto, auto),
+  column-gutter: 0.8em,
+  align: (left, center),
+)[
+  - Can edit pages in a project subtree, but not outside it.
+
+  - Every change is logged with diff and actor identity.
+
+  - All changes and deletions are reversible for up to 30 days.
+
+  - Access within a workspace is not limited.
+
+  - Updates to public pages are automatically shown to the world.
+][
+  #pause
+  #align(center + horizon)[
+    #text(size: 1.2em)[
+      $mat(delim: #(none, "}"), row-gap: #2em, ; ; ; ;)$
+    ]
+  ]
+][
+  blast radius
+
+  *reversible*
+
+  *auditable*
+
+  guardrails
+
+  isolation
+]
+
+== Example: GitHub Copilot Agent
+
+#grid(
+  columns: (1.5fr, auto, auto),
+  column-gutter: 0.8em,
+  align: (left, center),
+)[
+  - Can open PRs, but not push directly to `main`.
+
+  - Every change is bundled as a commit and  reviewable as a diff.
+
+  - CI and policy checks gate merges automatically.
+
+  - Cannot access untrusted internet resources (without approval)
+][
+  #pause
+  #align(center + horizon)[
+    #text(size: 1.2em)[
+      $mat(delim: #(none, "}"), row-gap: #2em, ; ; ; ;)$
+    ]
+  ]
+][
+  *blast radius*
+
+  *reversible*
+
+  *auditable*
+
+  *guardrails*
+
+  *isolation*
+]
+
 
 
 

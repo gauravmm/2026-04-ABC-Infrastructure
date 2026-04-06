@@ -1,4 +1,4 @@
-#import "@preview/touying:0.6.1": config-common, config-page, only, pause, uncover, utils
+#import "@preview/touying:0.6.1": config-common, config-page, meanwhile, only, pause, uncover, utils
 #import "@preview/metropolyst:0.1.0": (
   alert, brands, config-info, focus-slide as _focus-slide, metropolyst-theme, slide, title-slide,
 )
@@ -350,6 +350,67 @@
 ]
 
 
+== Implementing Safety
+
+#slide(title: [Implementing Safety])[
+  #grid(columns: (1fr, auto, auto), align: horizon, gutter: 1em)[
+
+    #grid(
+      columns: (1fr, 1fr),
+      rows: (1fr, 1fr), align: top + left,
+      gutter: 1em,
+    )[
+      *Constrain*
+
+      - Sandboxing and isolation
+        - Agents doing different tasks run in different environments.
+      - Principle of least privilege
+    ][#pause
+      *Slow Down*
+
+      - Draft-first workflows
+        - Final approval from a human.
+      - Rate limits and quotas
+        - Prevent runaway behavior.
+    ][#pause
+      *Observe*
+
+      - Audit logs that agents can't touch
+      - Agents communicate over human channels
+    ][#pause
+      *Recover*
+
+      - Soft-delete and Rollback
+        - Make recovery cheap and routine.
+        - Track user recoveries to debug your processes.
+      - Time-bounded recovery windows
+    ]
+  ][
+    #meanwhile
+    #uncover("1-")[
+      #align(center + horizon)[
+        #text(size: 1.2em)[
+          $mat(delim: #(none, "}"), row-gap: #2em, ; ; ; ;)$
+        ]
+      ]
+    ]
+  ][
+    #meanwhile
+    #uncover("1-")[
+      *blast radius*
+
+      *reversible*
+
+      *auditable*
+
+      *guardrails*
+
+      *isolation*
+    ]
+  ]
+]
+
+
 == Implementing Safety: MCP Gateway
 
 #align(center)[
@@ -378,29 +439,6 @@
   #image("images/gateway-middle.png", height: 100%)
 ]
 
-== Implementing Safety
-
-*Agents only communicate through auditable channels.*
-
-- Agents coordinate through shared append-only channels.
-- Humans can see the full conversation.
-- Agents cannot rewrite the record.
-- Suspicious behavior becomes observable early.
-
-*Sandboxing and role separation*
-
-Put agents in separate containers, VMs, repos, or workspaces.
-Limit filesystem, network, and credential access by default.
-Different agents get different scopes and tools.
-No single agent should have end-to-end authority over critical flows.
-
-
-*Immutable logs and provenance*
-
-Record what the agent saw, decided, and did.
-Make postmortems and accountability possible.
-
-
 
 == Balls-to-the-wall Ideas
 
@@ -421,28 +459,6 @@ Make postmortems and accountability possible.
   - The agent must present this signed message to the MCP to perform a sensitive action (e.g. mentioning a new entity, downloading a webpage, etc.)
 
 
-== BenchClaw's Safety Model
-
-1. NO ACCESS TO ITS OWN CODE.
-  - Good grief, this is a no-brainer. Why would you even consider giving an agent access to its own code? It's like giving a toddler a box of matches and saying "Don't burn the house down, okay?"
-2. Separate 'Claws: Public, Quality, PM.
-  - Running in different docker containers.
-  - Inside each claw, each session is also sandboxed.
-  - Use the same codebase, but different config.
-2. Notion:
-  - Separate access control (Each claw has read-write and read-only access to specific subtrees.)
-  - Reversible, auditable changes (all changes are logged for 30 days and can be reverted.)
-3. Claw -> Claw communication is mediated by a "mailbox" page.
-  - Quality -> PM: "The evaluation is complete."
-  - Auditable!
-4. PM Claw
-  - Only claw that can access Hive (PM software).
-    - Only has non-destructive access to Hive, and all changes are logged by the MCP.
-    - MCP checks if a Hive action includes any users outside of Ocellivision. If so, the action is written as a comment instead of executed. (TODO)
-    - More destructive tools (e.g. deleting a project) are removed from the MCP.
-      - e.g. Deleting an action that is older than 1 day instead just flags it as :trash can emoji:, and hides it from the MCP.
-  - has no access to the internet.
-
 
 #plain-focus-slide[
   // #place(center + horizon, dy: 10pt, image("images/look away now.png", height: 160%))
@@ -456,3 +472,40 @@ Make postmortems and accountability possible.
     #tiaoma.qrcode("https://www.gauravmanek.com/lectures/2026/abc-infrastructure/", options: (scale: 4.0), width: 8cm)
   ])
 ]
+
+= Appendix
+
+== BenchClaw's Safety Model
+
+1. *NO ACCESS TO ITS OWN CODE.*
+  - Good grief, this is a no-brainer.
+  - Why would you even consider giving an agent access to its own code?
+
+2. *Separate 'Claws: Public, Quality, PM.*
+  - Running in different docker containers.
+  - Use the same codebase, but different config.
+
+2. *Knowledgebase on Notion*
+  - RBAC (Role-Based Access Control)
+  - Reversible, auditable changes (all changes can be reverted within 30 days.)
+
+3. *Claw #sym.arrow.l.r Claw communication*
+  - Via a "mailbox" page on Notion.
+  - Auditable!
+
+== BenchClaw's Safety Model (contd.)
+
+4. *Least Privilege*
+  - *PM Claw* claw can access Hive (PM software).
+    - Checks if a Hive action includes any users outside of Ocellivision.
+    - Destructive tools (e.g. deleting a project) are removed or softened.
+      - e.g. Deleting an action that is older than 1 day flags it and hides it.
+    - Can read QA page titles, but not their content.
+
+  - *Quality Claw* can access QA page contents
+    - can only read documents for the current phase of work.
+    - can only write fresh documents until a human has reviews them.
+    - has no access to the internet at large.
+
+  - *Public Claw* can only access intern pages.
+    - used by interns and for testing new tools.

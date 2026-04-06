@@ -360,53 +360,50 @@
       rows: (1fr, 1fr), align: top + left,
       gutter: 1em,
     )[
-      *Constrain*
-
-      - Sandboxing and isolation
-        - Agents doing different tasks run in different environments.
-      - Principle of least privilege
-    ][#pause
-      *Slow Down*
-
-      - Draft-first workflows
-        - Final approval from a human.
-      - Rate limits and quotas
-        - Prevent runaway behavior.
-    ][#pause
-      *Observe*
-
-      - Audit logs that agents can't touch
-      - Agents communicate over human channels
-    ][#pause
-      *Recover*
-
-      - Soft-delete and Rollback
-        - Make recovery cheap and routine.
-        - Track user recoveries to debug your processes.
-      - Time-bounded recovery windows
-    ]
-  ][
-    #meanwhile
-    #uncover("1-")[
-      #align(center + horizon)[
-        #text(size: 1.2em)[
-          $mat(delim: #(none, "}"), row-gap: #2em, ; ; ; ;)$
-        ]
+      #uncover("1-")[
+        *Constrain*
+        - Sandboxing and isolation
+          - Agents doing different tasks run in different environments.
+        - Principle of least privilege
+      ]
+    ][
+      #uncover("2-")[
+        *Slow Down*
+        - Draft-first workflows
+          - Final approval from a human.
+        - Rate limits and quotas
+          - Prevent runaway behavior.
+      ]
+    ][
+      #uncover("3-")[
+        *Observe*
+        - Audit logs agents can't touch
+        - Agents communicate over human channels
+      ]
+    ][
+      #uncover("4-")[
+        *Recover*
+        - Soft-delete and Rollback
+          - Make recovery cheap.
+          - Track user recoveries to debug your processes.
       ]
     ]
   ][
-    #meanwhile
-    #uncover("1-")[
-      *blast radius*
-
-      *reversible*
-
-      *auditable*
-
-      *guardrails*
-
-      *isolation*
+    #align(center + horizon)[
+      #text(size: 1.2em)[
+        $mat(delim: #(none, "}"), row-gap: #2em, ; ; ; ;)$
+      ]
     ]
+  ][
+    *blast radius*
+
+    *reversible*
+
+    *auditable*
+
+    *guardrails*
+
+    *isolation*
   ]
 ]
 

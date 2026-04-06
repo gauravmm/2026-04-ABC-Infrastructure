@@ -3,10 +3,10 @@
 #import "@preview/metropolyst:0.1.0": slide
 
 #let half-page(lhs, rhs) = slide(
-  config: config-page(header: none, margin: 0pt),
+  config: config-page(header: none, margin: (top: 0pt, right: 0pt, bottom: 0pt)),
 )[
   #grid(
-    columns: (1.2fr, .8fr),
+    columns: (1.3fr, 1fr),
     align: (left + horizon, center + horizon),
     column-gutter: 1em,
     lhs,

@@ -16,16 +16,6 @@
   inset: (x: 0pt, y: 16pt),
   radius: 8pt,
 )[#body]
-#let shadow-image(path, ..args) = layout(avail => context {
-  let img = image(path, ..args)
-  let (width: w, height: h) = measure(img, width: avail.width)
-  box(width: w, height: h, clip: false, stroke: 1pt + black)[
-    #for (offset, opacity) in ((7pt, 5%), (5pt, 10%), (3pt, 15%), (1pt, 18%)) {
-      place(dx: offset, dy: offset, rect(width: w, height: h, fill: rgb(0, 0, 0, opacity), stroke: none))
-    }
-    #place(top + left, img)
-  ]
-})
 
 #show strong: it => text(weight: 700, it.body)
 
@@ -55,7 +45,7 @@
   main-text-color: rgb("#333333"),
   progress-bar-background: rgb("#78334e"),
   config-info(
-    title: [Infrastructure-based Safety\ For Your Claw],
+    title: [Infrastructure-based Safety\ For Your 'Claw],
     subtitle: [Agentic Builders' Collective],
     author: [Dr. Gaurav Manek],
     date: "2026-04-18",
@@ -65,18 +55,27 @@
 )
 
 
-
 #half-page[
   #title-page()
 ][
-  #box(fill: color.rgb("#fff"), inset: 1em, radius: .25em, stroke: 2pt + color.rgb("#444"), link(
-    "https://www.gauravmanek.com/lectures/2026/abc-infrastructure/",
-  )[
-    #tiaoma.qrcode("https://www.gauravmanek.com/lectures/2026/abc-infrastructure/", options: (scale: 4.0), width: 8cm)
+  #grid(rows: auto, gutter: 1em)[
+    #box(fill: color.rgb("#fff"), inset: 1em, radius: .25em, stroke: 2pt + color.rgb("#444"), link(
+      "https://www.gauravmanek.com/lectures/2026/abc-infrastructure/",
+    )[
+      #tiaoma.qrcode(
+        "https://www.gauravmanek.com/lectures/2026/abc-infrastructure/",
+        options: (scale: 4.0),
+        width: 8cm,
+      )
+    ])
+  ][
+    *Slides and Code*
+  ]
+  #pause
+  #place(center + horizon, dx: -30pt, dy: 0pt, scale(125%, origin: center + horizon)[
+    #image("images/openclaw_sticker.png")
   ])
 ]
-
-
 
 
 #slide(
@@ -140,9 +139,87 @@
   Replit wiped the entire production db of SaaStr.AI.
 ]
 
-== The Problem
 
-"Pilot Error" is not a good terminal diagnosis for airplane accidents.
+== The Problem
+#slide()[
+  #align(center)[
+    *"LLM accident" is not a diagnosis, its a thought-terminating cliché.*
+
+    It is like writing "pilot error" in an air-crash report.
+  ]
+
+  #v(1fr)
+  #line(length: 100%, stroke: .5pt)
+
+  #grid(
+    columns: (1fr, auto, auto, auto, 1fr),
+    column-gutter: 1em,
+  )[~][
+    *Bad framing*
+
+    - all blame to the operator
+    - the fault was not foreseeable
+    - no explanatory value
+
+  ][
+    #sym.arrow.r
+  ][
+    *Useful framing*
+
+    - design defends against operator mistakes
+    - failure modes are predictable
+    - points to concrete safeguards
+  ][~]
+
+  #line(length: 100%, stroke: .5pt)
+  #v(1fr)
+
+  #pause
+  #align(center)[
+    We don't make humans perfect.
+
+    #accent[
+      *We design systems that stay safe when humans are imperfect.*
+    ]
+  ]
+
+  #v(0.4fr)
+]
+
+== The Threat Model
+
+#slide(composer: (1fr, 1fr))[
+  - *Sampling artifacts*:
+    - Hallucinations
+    - Brittle behavior from small prompt changes
+    - Non-determinism
+
+  - *Theory of mind failures*:
+    - Interpreting instructions without modeling intent
+    - Poor awareness of hidden context or unstated constraints
+    - Overconfidence in incorrect outputs
+    - Credulity or gullibility
+
+    #v(1fr)
+][
+  - *Reward hacking*:
+    - Goal drift
+    - Difficulty stopping or asking for help
+    - Context-window loss: forgetting earlier instructions or decisions
+
+  - *Context Limits*
+    - Context rot and context anxiety
+    - Can't process large or complex inputs
+    - Difficulty maintaining long-term plans
+
+  #v(1fr)
+  #callout()[
+    #align(center)[
+      *Predictable* failures are\
+      failures we can *mitigate*.
+    ]
+  ]
+]
 
 == The Paradigm
 
@@ -250,6 +327,10 @@ Any infrastructure must reduce the capabilities of the system to achieve securit
     - Human approval is required to downgrade the privilege level of a memory item.
   - (Bell-LaPadula Model, if you are some kind of nerd like me.)
 
+3. Cryptographic attestation of user intent.
+  - Every user message and/or reaction is signed by the channel to prove that it was actually sent by a human, and not forged by the agent.
+  - The agent must present this signed message to the MCP to perform a sensitive action (e.g. mentioning a new entity, downloading a webpage, etc.)
+
 
 #plain-focus-slide[
   // #place(center + horizon, dy: 10pt, image("images/look away now.png", height: 160%))
@@ -263,4 +344,3 @@ Any infrastructure must reduce the capabilities of the system to achieve securit
     #tiaoma.qrcode("https://www.gauravmanek.com/lectures/2026/abc-infrastructure/", options: (scale: 4.0), width: 8cm)
   ])
 ]
-

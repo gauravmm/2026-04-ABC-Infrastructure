@@ -16,7 +16,7 @@ jobs:
         working-directory: .
       - uses: actions/upload-artifact@v4
         with:
-          name: roast-my-tech-stack-slides
+          name: slides
           path: slides.pdf
           retention-days: 1
 
@@ -42,7 +42,7 @@ jobs:
           fi
       - name: Stage release assets
         run: |
-          cp artifacts/roast-my-tech-stack-slides/slides.pdf roast-my-tech-stack-slides.pdf
+          cp artifacts/slides/slides.pdf slides.pdf
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.name }}
@@ -50,4 +50,4 @@ jobs:
           body: Compiled slide decks for ${{ steps.tag.outputs.name }}
           fail_on_unmatched_files: true
           files: |
-            roast-my-tech-stack-slides.pdf
+            slides.pdf

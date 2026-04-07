@@ -221,7 +221,12 @@
 While remaining _powerful enough_ to be useful.
 
 
-== Example: Claude Gmail MCP
+== Example: Claude Gmail Connector
+
+#align(left)[
+  #image("images/claude-code-logo.svg", height: 1.5cm)
+]
+#v(1em)
 
 #grid(
   columns: (1.5fr, auto, auto),
@@ -253,6 +258,11 @@ While remaining _powerful enough_ to be useful.
 ]
 
 == Example: Notion MCP (new)
+
+#align(left)[
+  #image("images/Notion_Logo_0.svg", height: 2cm)
+]
+#v(1em)
 
 #grid(
   columns: (1.5fr, auto, auto),
@@ -288,6 +298,11 @@ While remaining _powerful enough_ to be useful.
 ]
 
 == Example: GitHub Copilot Agent
+
+#align(left)[
+  #image("images/GitHub_Copilot_Lockup_Black.svg", height: 1.5cm)
+]
+#v(1em)
 
 #grid(
   columns: (1.5fr, auto, auto),

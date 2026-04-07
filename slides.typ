@@ -186,46 +186,11 @@
   #v(0.4fr)
 ]
 
-== The Threat Model
-/*
-#slide(composer: (1fr, 1fr))[
-  - *Sampling artifacts*:
-    - Hallucinations
-    - Brittle behavior from small prompt changes
-    - Non-determinism
-
-  - *Theory of mind failures*:
-    - Interpreting instructions without modeling intent
-    - Poor awareness of hidden context or unstated constraints
-    - Overconfidence in incorrect outputs
-    - Credulity or gullibility
-
-    #v(1fr)
-][
-  - *Reward hacking*:
-    - Goal drift
-    - Difficulty stopping or asking for help
-    - Context-window loss: forgetting earlier instructions or decisions
-
-  - *Context Limits*
-    - Context rot and context anxiety
-    - Can't process large or complex inputs
-    - Difficulty maintaining long-term plans
-
-  #v(1fr)
-  #callout()[
-    #align(center)[
-      *Predictable* failures are\
-      failures we can *mitigate*.
-    ]
-  ]
-]
-*/
 
 == When Designing Infrastructure
 
 #grid(
-  columns: (1.5fr, auto, 1fr),
+  columns: (1.3fr, auto, 1fr),
   column-gutter: 0.8em,
   align: (left, center),
 )[
@@ -246,9 +211,15 @@
     ]
   ]
 ][
-  While being _powerful enough_\
-  for the task at hand.
+  Build a threat model with\ *OWASP's STRIDE* (or others)
+
+  These are general principles for most agentic systems.
+
 ]
+#pause
+#v(1em)
+While remaining _powerful enough_ to be useful.
+
 
 == Example: Claude Gmail MCP
 
@@ -416,7 +387,9 @@
 
 
 == Implementing Safety: MCP Gateway
-#slide(composer: (1fr, auto))[
+#slide(composer: (auto, 1fr))[
+  #image("images/gateway-middle.png", height: 100%)
+][
   #v(1fr)
   An *MCP Gateway* sits between your 'Claw and the world, mediating access.
 
@@ -432,42 +405,118 @@
 
   #v(1fr)
   _Check out `gauravmm/mcp_gateway_maker` for code + skills!_
-][
-  #image("images/gateway-middle.png", height: 100%)
 ]
 
 
 == Balls-to-the-wall Ideas
+#slide(composer: (1fr, auto))[
+  1. *Named Entity Recognition (NER) Guardrails*
+    - Use NER to identify sensitive entities in output
+      - e.g. user names, project names.
+    - Ban mentioning entities in channels unless a human has previously explicitly allowed it.
+    - Prevent the agent from leaking sensitive information across different users or projects.
 
-1. Named Entity Recognition (NER) Guardrails for Public Agents
-  - Use NER to identify sensitive entities in the agent's actions, e.g. user names, project names, etc.
-  - Ban mentioning entities in channels unless a human has previously explicitly allowed it.
-  - This can prevent the agent from leaking sensitive information across different users or projects. (i.e. In a channel with Alice about Project X, any attempt by the agent to mention Bob or Project Y should be blocked.)
+  #pause
+  2. *Cryptographic attestation of user intent*
+    - Every user message and/or reaction is signed by the channel to prove that it was actually sent by a human.
+    - The agent presents this signed message to the tool to authorize a sensitive action (e.g. mentioning a new entity, sending an email, etc.)
 
-2. Context Firebreaks for Privileged Agents
-  - Every memory item has "context tags" that indicates which category of information it belongs to, e.g. "customer X", "project Y", etc.
-  - Agents can read any memory item, but when they do, the MCP keeps track of which tags have been accessed in the current session.
-  - Agents can only write to memory/channels with the least privilege required to write to all of the tags.
-    - Human approval is required to downgrade the privilege level of a memory item.
-  - (Bell-LaPadula Model, if you are some kind of nerd like me.)
-
-3. Cryptographic attestation of user intent.
-  - Every user message and/or reaction is signed by the channel to prove that it was actually sent by a human, and not forged by the agent.
-  - The agent must present this signed message to the MCP to perform a sensitive action (e.g. mentioning a new entity, downloading a webpage, etc.)
-
-
-
-#plain-focus-slide[
-  // #place(center + horizon, dy: 10pt, image("images/look away now.png", height: 160%))
+][
+  #meanwhile
+  #image("images/crazy-ideas.png", height: 100%)
 ]
 
 
-#half-page[][
-  #box(fill: color.rgb("#fff"), inset: 1em, radius: .25em, stroke: 2pt + color.rgb("#444"), link(
-    "https://www.gauravmanek.com/lectures/2026/abc-infrastructure/",
-  )[
-    #tiaoma.qrcode("https://www.gauravmanek.com/lectures/2026/abc-infrastructure/", options: (scale: 4.0), width: 8cm)
-  ])
+== Balls-to-the-wall Ideas
+#slide(composer: (1fr, auto))[
+  #v(1fr)
+  3. *Context Firebreaks for Privileged Agents*
+    - Every source has _context tags_.
+    - Agents can read anything, but the tags are monitored.
+    - Agents can only write to places with the least privilege required to write to *all* of the tags.
+      - Only humans can downgrade the privilege level of information.
+  #v(1fr)
+  #text(size: 14pt)[Based on the Bell-LaPadula Model, if you are some kind of nerd.]
+][
+  #image("images/crazy-ideas.png", height: 100%)
+]
+
+
+
+#half-page[
+  #v(2em)
+  #text(size: 1.6em, weight: 700)[
+    Infrastructure-based Safety For Your 'Claw
+  ]
+
+  #v(1fr)
+
+  #align(center)[
+    #grid(
+      columns: (auto, auto, auto),
+      rows: (auto, auto),
+      align: horizon,
+      gutter: 1em,
+    )[*Do this*][][*For this*][
+      Constrain\
+      Slow Down\
+      Observe\
+      Recover
+    ][
+      #align(center + horizon)[
+        #text(size: .65em)[
+          $mat(delim: #(none, "}"), row-gap: #2em, ; ; ; ;)$
+        ]
+      ]
+    ][
+      blast radius\
+      reversible\
+      auditable\
+      guardrails\
+      isolation\
+    ]
+  ]
+  #v(1fr)
+  #align(center)[
+    *Using this*\
+    #link("https://github.com/gauravmm/mcp_gateway_maker")[
+      #box(
+        fill: color.rgb("#fff"),
+        inset: (x: 1em, y: 0.8em),
+        radius: .35em,
+        stroke: 2pt + color.rgb("#444"),
+      )[
+        #grid(
+          columns: (auto, auto),
+          column-gutter: 0.9em,
+          align: (center, horizon),
+        )[
+          #image("assets/github.svg", width: 1.5cm)
+        ][
+          #align(left)[
+            #text(size: 0.9em, weight: 700, fill: black)[gauravmm /]
+            #linebreak()
+            #text(size: 1.05em, fill: black)[mcp_gateway_maker]
+          ]
+        ]
+      ]
+    ]
+  ]
+  #v(2em)
+][
+  #grid(rows: auto, gutter: 1em)[
+    #box(fill: color.rgb("#fff"), inset: 1em, radius: .25em, stroke: 2pt + color.rgb("#444"), link(
+      "https://www.gauravmanek.com/lectures/2026/abc-infrastructure/",
+    )[
+      #tiaoma.qrcode(
+        "https://www.gauravmanek.com/lectures/2026/abc-infrastructure/",
+        options: (scale: 4.0),
+        width: 8cm,
+      )
+    ])
+  ][
+    *Slides and Code*
+  ]
 ]
 
 = Appendix
@@ -506,3 +555,38 @@
 
   - *Public Claw* can only access intern pages.
     - used by interns and for testing new tools.
+
+== The LLM Threat Model
+
+#slide(composer: (1fr, 1fr))[
+  - *Sampling artifacts*:
+    - Hallucinations
+    - Brittle behavior from small prompt changes
+    - Non-determinism
+
+  - *Theory of mind failures*:
+    - Interpreting instructions without modeling intent
+    - Poor awareness of hidden context or unstated constraints
+    - Overconfidence in incorrect outputs
+    - Credulity or gullibility
+
+    #v(1fr)
+][
+  - *Reward hacking*:
+    - Goal drift
+    - Difficulty stopping or asking for help
+    - Context-window loss: forgetting earlier instructions or decisions
+
+  - *Context Limits*
+    - Context rot and context anxiety
+    - Can't process large or complex inputs
+    - Difficulty maintaining long-term plans
+
+  #v(1fr)
+  #callout()[
+    #align(center)[
+      *Predictable* failures are\
+      failures we can *mitigate*.
+    ]
+  ]
+]
